@@ -1,0 +1,29 @@
+id: example-finding-001
+title: Overly permissive externally_connectable property
+severity: Low
+description: >
+  The manifest file contains the externally_connectable property with several wildcard domains.
+risk: >
+  An attacker can read extension data if they find an exploitable XSS vulnerability or are able
+  to take over a subdomain that matches the wildcard domains.
+affected:
+  - file: manifest.json
+    code: >
+      [...]
+          "externally_connectable": {
+              "matches": [
+                  "https://*.acme.com/*",
+                  "https://*.acme.local/*",
+                  "https://*.acme.xyz/*"
+              ]
+          },
+      [...]
+reproduction:
+  poc: >
+    await chrome.runtime.sendMessage(
+        "xyz", {
+        "payload": "[...]",
+    }, console.log)
+  description: The PoC shows how to leak user data from the specified domain.
+mitigation: >
+  The externally_connectable property should only contain the domain that is needed.

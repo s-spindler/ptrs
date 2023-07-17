@@ -1,0 +1,86 @@
+schemaVersion: 1.0.0-alpha.1
+provider:
+  organization:
+    name: Globex
+  testers:
+    - Homer S.
+    - Hank S.
+recipient:
+  organization:
+    name: Acme
+introduction: >
+  asdf
+scope:
+  - "Part I: White-box penetration test of Acme mobile app"
+  - "Part II: White-box penetration test against Acme web app"
+findings:
+  - id: example-finding-001
+    title: Overly permissive externally_connectable property
+    severity: Low
+    description: >
+      The manifest file contains the externally_connectable property with several wildcard domains.
+    risk: >
+      An attacker can read extension data if they find an exploitable XSS vulnerability or are able
+      to take over a subdomain that matches the wildcard domains.
+    affected:
+      - file: manifest.json
+        code: >
+          [...]
+              "externally_connectable": {
+                  "matches": [
+                      "https://*.acme.com/*",
+                      "https://*.acme.local/*",
+                      "https://*.acme.xyz/*"
+                  ]
+              },
+          [...]
+    reproduction:
+      poc: >
+        await chrome.runtime.sendMessage(
+            "xyz", {
+            "payload": "[...]",
+        }, console.log)
+      description: The PoC shows how to leak user data from the specified domain.
+    mitigation: >
+      The externally_connectable property should only contain the domain that is needed.
+
+  - id: example-finding-002
+    title: Invocation of autofill inside iframe
+    severity: Medium
+    description: >
+      The autofill feature of the Android app can be used inside cross-origin iframes.
+      The hostname of the top-level page is being used to determine the suggested
+      credentials instead of the hostname of the iframe that initiated the autofill request.
+    risk: >
+      A user can be tricked into auto-filling their credentials in the context of a malicious page.
+    reproduction:
+      steps:
+        - Install the Acme Android app and log in.
+        - Add random credentials to the https://acme-test.tiiny.site website.
+        - Visit https://acme-test.tiiny.site/ and select the password input field.
+        - Select the credential that will be displayed.
+        - An alert is being displayed which contains the email address and password.
+    mitigation: >
+      Prevent the user from auto-filling their credentials in iframes.
+
+  - id: example-finding-003
+    title: Arbitrary connections in IFrameFactory
+    severity: Medium
+    description: >
+      The connection variable can be changed to an arbitrary URL by running a crafted JavaScript
+      on a page controlled by the attacker.
+    risk: >
+      The victim's autofill data can be read by the attacker.
+    affected:
+      - file: >
+          apps/extension/src/IFrameFactory.tsx
+        code: >
+          [...]
+      - file: apps/extension/src/messenger.ts
+        code: >
+          [...]
+    reproduction:
+      poc: >
+        [...]
+    mitigation: >
+      Directly pass the connection variable from the connection pool service.
