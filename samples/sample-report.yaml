@@ -1,0 +1,146 @@
+# Sample based on the following pentest report by Cure53 for Proton:
+# https://cure53.de/pentest-report_proton-pass.pdf
+schemaVersion: v1.0.0-alpha.1
+provider:
+  organization:
+    name: Cure53
+  testers:
+  - Dr.-Ing. M. Heiderich
+  - M. Pedhapati
+requester:
+  organization:
+    name: Proton AG
+introduction: >
+  blablabla
+scope:
+  - "WP1: White-box penetration testing against Proton Pass Android mobile app"
+  - "WP2: White-box penetration testing against Proton Pass iOS mobile app"
+findings:
+  - id: PRO-01-002 WP3
+    summary:  Overly permissive externally_connectable property
+    severity: Low
+    description: >
+      While auditing the extension file for any misconfigurations, it was noticed that the
+      externally_connectable property had many wildcard domains listed. This lets a malicious
+      adversary read the items in the Proton Pass, realizing risks linked to XSS or subdomain
+      takeover on any of these domains. However, the Cure53 team could not find any
+      instances of XSS or subdomain takeovers in the externally-connectable domains, which
+      explains the reduced impact-score.
+
+      The PoC shows a way to leak user-credentials from the specified domains.
+    affected:
+      - file: manifest.json
+        code: >
+          [...]
+              "externally_connectable": {
+                  "matches": [
+                      "https://*.proton.me/*",
+                      "https://*.proton.local/*",
+                      "https://*.proton.black/*",
+                      "https://*.proton.pink/*"
+                  ]
+              },
+          [...]
+    reproduction:
+      poc: >
+        await chrome.runtime.sendMessage('ghmbeldphafepmbegfdlkpapadhbakde',
+        {"type":"AUTOFILL_SELECT","payload":{"shareId":"IP1djJdd0za_ZJJIpf-
+        I58moogKkhQazO3ptbLvEBqmrGiVpLh2N5fAwthtrZHfC4ibImNSUafI71CghVh8IXg==","itemId":
+        "0FvEW2R_6rpvZWwoKjNJ7a7TlxF8Skjsg0tC7Gf2xyEFJGmWr_ZkQTsd8zP2t8iOz126xgru8Gd_48p
+        PwooMNQ=="},"sender":"content-script"},console.log)
+    mitigation: >
+      It is recommended to ensure that the externally_connectable property only contains the
+      domain that is needed, in this case account.proton.me. This will help to reduce the
+      attack surface on the extension.
+  - id: PRO-01-003 WP
+    summary:  Autofill can be invoked from within iframes
+    severity: Medium
+    description: >
+      The observation was made that the autofill feature from the Android application could be
+      used from within cross-origin iframes. After further investigation, it was discovered that
+      the hostname of the top-level page is being used to determine the suggested
+      credentials. This is deployed instead of the hostname of the iframe that initiated the
+      autofill request. The top-level URL of the page is also displayed in the Android
+      application when one chooses the Open Proton Pass option.
+      Both of these behaviors are problematic, given they can be abused to trick users into
+      auto-filling their credentials in the context of malicious pages. This happens in the case
+      that the targeted page contains third-party iframes commonly used for advertisements or
+      analytics, for example.
+    reproduction:
+      steps:
+        - Install the Proton Pass Android application and log in.
+        - Add any credentials to the https://proton-test.tiiny.site website.
+        - Access https://proton-test.tiiny.site/ and click on the password input field.
+        - Select the credential that will be displayed and
+        - Observe an alert containing the email address and password.
+    mitigation: >
+      To mitigate this issue, Cure53 advises preventing the user from auto-filling their
+      credentials to iframes, similar to what has been done in the Proton Pass extension.
+      Another option would be to use the iframe's src attribute value to suggest the available
+      credentials to be auto-filled. Additional guidance on this matter can also be found in
+      Android's Autofill's Web security documentation's section.
+  - id: PRO-01-008 WP
+    summary: Arbitrary port connections in IFrameContextProvider
+    description: >
+      While auditing the Proton Pass extension mechanism for message passing, it was
+      noticed that the message shifts from the autofill dropdown page and the content script of
+      the current page takes place. This happens via the service worker using a random port
+      name created by the content script.
+      This port name is passed to the dropdown page via postMessage from the content
+      script. It was discovered that this port name can be changed to a victim's page port by
+      running a crafted JavaScript in the attacker's page. This item races the actual port name
+      from the content script by sending continuous postMessages to the dropdown iframe.
+      The issue effectively allows listening on the sensitive messages sent to the victim's
+      page. However, as the port name is randomly generated, the Cure53 team could not find
+      a way to fully exploit this issue to read the victim's autofill data. As such, the impact has
+      been downgraded.
+      The following snippet shows the affected code where the port name is retrieved via
+      message listener without any origin check.
+    affected:
+      - file: >
+          applications/pass-extension/src/content/injections/apps/context
+          /IFrameContextProvider.tsx
+        code: >
+          const portInitHandler = safeCall((event:
+          MessageEvent<Maybe<IFrameMessageWithSender>>) => {
+              if (
+                  event.data !== undefined &&
+                  event.data?.type === IFrameMessageType.IFRAME_INJECT_PORT &&
+                  event.data.sender === 'content-script'
+              ) {
+                  window.removeEventListener('message', portInitHandler);
+                  /* Open a new dedicated port with the worker */
+                  const message = event.data;
+                  const framePortName = `${message.payload.port}-${endpoint}`;
+                  //framePortName is retrieved via message listener
+                  framePortRef = browser.runtime.connect({ name: framePortName });
+      - file: applications/pass-extension/pass/extension/message/message-broker.ts
+        code: >
+          port.onMessage.addListener(async (message: Maybe<PortFrameForwardingMessage>,
+          source) => {
+                  if (message && message.type ===
+                  WorkerMessageType.PORT_FORWARDING_MESSAGE) {
+                      if (ports.has(message.forwardTo)) {
+                      ports.get(message.forwardTo)!.postMessage({ ...message.payload, forwarded:
+                      true });
+                  } else {
+                      source.postMessage(backgroundMessage({ type:
+                      WorkerMessageType.PORT_UNAUTHORIZED }));
+                  }
+              }
+          });
+    reproduction:
+      poc: >
+        <form> <label for="username">Username:</label> <input type="text" id="username"
+        name="username" autocomplete="username" required> <label
+        for="password">Password:</label> <input type="password" id="password"
+        name="password" autocomplete="current-password" required> <input type="submit"
+        value="Login"> </form>
+        <script>window.onmessage=console.log;setInterval(function(){try{
+        frames[0].postMessage({"type":"IFRAME_INJECT_PORT","payload":{"port":"content-
+        script-xx-dd"},"sender":"content-script"},"*")}catch{};},2)</script>
+    mitigation: >
+      It is recommended to pass the port name from the service worker instead of the page's
+      content script. This disallows the page from modifying the port name that the dropdown
+      connects to. If this is not possible, it is suggested to make the port name even more
+      random.
