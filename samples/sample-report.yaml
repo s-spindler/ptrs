@@ -1,6 +1,6 @@
 # Sample based on the following pentest report by Cure53 for Proton:
 # https://cure53.de/pentest-report_proton-pass.pdf
-schemaVersion: v1.0.0-alpha.1
+schemaVersion: 1.0.0-alpha.1
 provider:
   organization:
     name: Cure53
@@ -17,7 +17,7 @@ scope:
   - "WP2: White-box penetration testing against Proton Pass iOS mobile app"
 findings:
   - id: PRO-01-002 WP3
-    summary:  Overly permissive externally_connectable property
+    summary: Overly permissive externally_connectable property
     severity: Low
     description: >
       While auditing the extension file for any misconfigurations, it was noticed that the
