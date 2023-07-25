@@ -3,13 +3,13 @@ summary: Overly permissive externally_connectable property
 severity: Low
 description: >
   While auditing the extension file for any misconfigurations, it was noticed that the
-  externally_connectable property had many wildcard domains listed. This lets a malicious
-  adversary read the items in the Proton Pass, realizing risks linked to XSS or subdomain
-  takeover on any of these domains. However, the Cure53 team could not find any
-  instances of XSS or subdomain takeovers in the externally-connectable domains, which
-  explains the reduced impact-score.
+  externally_connectable property had many wildcard domains listed.
+risk: >
+  A malicious adversary could read the items in the Proton Pass, realizing risks linked to XSS or
+  subdomain takeover on any of these domains.
 
-  The PoC shows a way to leak user-credentials from the specified domains.
+  The Cure53 team could not find any instances of XSS or subdomain takeovers in the
+  externally-connectable domains, which explains the reduced impact-score.
 affected:
   - file: manifest.json
     code: >
@@ -30,6 +30,7 @@ reproduction:
     I58moogKkhQazO3ptbLvEBqmrGiVpLh2N5fAwthtrZHfC4ibImNSUafI71CghVh8IXg==","itemId":
     "0FvEW2R_6rpvZWwoKjNJ7a7TlxF8Skjsg0tC7Gf2xyEFJGmWr_ZkQTsd8zP2t8iOz126xgru8Gd_48p
     PwooMNQ=="},"sender":"content-script"},console.log)
+  description: The PoC shows a way to leak user-credentials from the specified domains.
 mitigation: >
   It is recommended to ensure that the externally_connectable property only contains the
   domain that is needed, in this case account.proton.me. This will help to reduce the
