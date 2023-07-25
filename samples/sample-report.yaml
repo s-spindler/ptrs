@@ -7,7 +7,7 @@ provider:
   testers:
   - Dr.-Ing. M. Heiderich
   - M. Pedhapati
-requester:
+recipient:
   organization:
     name: Proton AG
 introduction: >
