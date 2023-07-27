@@ -11,7 +11,7 @@ recipient:
   organization:
     name: Proton AG
 introduction: >
-  blablabla
+  asdf
 scope:
   - "WP1: White-box penetration testing against Proton Pass Android mobile app"
   - "WP2: White-box penetration testing against Proton Pass iOS mobile app"
