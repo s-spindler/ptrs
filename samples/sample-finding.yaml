@@ -1,5 +1,5 @@
 id: PRO-01-002 WP3
-summary: Overly permissive externally_connectable property
+title: Overly permissive externally_connectable property
 severity: Low
 description: >
   While auditing the extension file for any misconfigurations, it was noticed that the
