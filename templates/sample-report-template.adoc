@@ -21,7 +21,7 @@
 == Identified Vulnerabilities
 
 {{ range $finding := $r.findings -}}
-=== {{ .id }}: {{ .title }}
+=== {{ $finding.id }}: {{ $finding.title }} ({{ $finding.severity }})
 
 ==== Description
 

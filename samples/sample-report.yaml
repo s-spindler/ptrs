@@ -84,6 +84,7 @@ findings:
       Android's Autofill's Web security documentation's section.
   - id: PRO-01-008 WP
     title: Arbitrary port connections in IFrameContextProvider
+    severity: Medium
     description: >
       While auditing the Proton Pass extension mechanism for message passing, it was
       noticed that the message shifts from the autofill dropdown page and the content script of
