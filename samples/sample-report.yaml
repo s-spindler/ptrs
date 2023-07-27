@@ -5,8 +5,8 @@ provider:
   organization:
     name: Cure53
   testers:
-  - Dr.-Ing. M. Heiderich
-  - M. Pedhapati
+    - Dr.-Ing. M. Heiderich
+    - M. Pedhapati
 recipient:
   organization:
     name: Proton AG
@@ -16,7 +16,6 @@ scope:
   - "WP1: White-box penetration testing against Proton Pass Android mobile app"
   - "WP2: White-box penetration testing against Proton Pass iOS mobile app"
 findings:
-
   - id: PRO-01-002 WP3
     title: Overly permissive externally_connectable property
     severity: Low
@@ -56,7 +55,7 @@ findings:
       attack surface on the extension.
 
   - id: PRO-01-003 WP
-    title:  Autofill can be invoked from within iframes
+    title: Autofill can be invoked from within iframes
     severity: Medium
     description: >
       The observation was made that the autofill feature from the Android application could be
