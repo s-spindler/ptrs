@@ -1,9 +1,9 @@
 name: ptrs CI
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   Validate:
@@ -13,7 +13,17 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: "20"
       - run: npm install -g ajv-cli
       - run: ajv validate -s penetration-test-finding-schema.json -d samples/sample-finding.yaml
       - run: ajv validate -s penetration-test-report-schema.json -r penetration-test-finding-schema.json -d samples/sample-report.yaml
+  Template:
+    name: Check that go template works
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: curl -o /usr/local/bin/gomplate -sSL https://github.com/hairyhenderson/gomplate/releases/download/v3.11.5/gomplate_linux-amd64
+      - run: echo "16f6a01a0ff22cae1302980c42ce4f98ca20f8c55443ce5a8e62e37fc23487b3 /usr/local/bin/gomplate" | sha256sum --check --quiet
+      - run: chmod 755 /usr/local/bin/gomplate
+      - run: gomplate -d report=samples/sample-report.yaml -f templates/sample-report-template.adoc > /tmp/templated-sample-report.adoc
+      - run: echo "2bdba0b5fe8d53a3a1830868014590ca0f0d9aae76ae51a705753237476c87a3 /tmp/templated-sample-report.adoc" | sha256sum --check --quiet
