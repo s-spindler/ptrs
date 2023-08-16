@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: sudo apt-get update -q -y && sudo apt-get install -q -y ruby
-      - run: gem install asciidoctor-pdf
+      - run: sudo gem install asciidoctor-pdf
       - name: download adoc file
         uses: actions/download-artifact@v3
         with:
