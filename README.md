@@ -3,6 +3,9 @@
 ptrs (**p**enetration **t**est **r**eport **s**chema) is a schema for structured penetration test
 reports.
 
+The schema is defined using [JSON schema](https://json-schema.org/).
+There is a separate sub-schema for findings.
+
 ## Why?
 
 ### Receiving a penetration test report
@@ -23,6 +26,14 @@ about formatting.
 
 Still want a PDF report as well? You can create a template in a markup language like AsciiDoc
 and convert it to PDF (see below).
+
+## Validation
+
+Report and finding files can be validated against the JSON schema files in this repository using
+any JSON schema validator.
+
+Check out the GitHub Actions steps for inspiration which use
+[ajv-cli](https://www.npmjs.com/package/ajv-cli).
 
 ## Templating
 
