@@ -38,7 +38,7 @@ jobs:
     needs: Template_go-template_to_adoc
     runs-on: ubuntu-latest
     steps:
-      - run: apt-get update -q -y && apt-get install -q -y ruby
+      - run: sudo apt-get update -q -y && sudo apt-get install -q -y ruby
       - run: gem install asciidoctor-pdf
       - name: download adoc file
         uses: actions/download-artifact@v3
