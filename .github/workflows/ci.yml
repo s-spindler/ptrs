@@ -17,7 +17,7 @@ jobs:
       - run: npm install -g ajv-cli
       - run: ajv validate -s penetration-test-finding-schema.json -d samples/sample-finding.yaml
       - run: ajv validate -s penetration-test-report-schema.json -r penetration-test-finding-schema.json -d samples/sample-report.yaml
-  Template:
+  Template_go-template_to_adoc:
     name: Check that go template works
     runs-on: ubuntu-latest
     steps:
@@ -25,5 +25,24 @@ jobs:
       - run: curl -o /usr/local/bin/gomplate -sSL https://github.com/hairyhenderson/gomplate/releases/download/v3.11.5/gomplate_linux-amd64
       - run: echo "16f6a01a0ff22cae1302980c42ce4f98ca20f8c55443ce5a8e62e37fc23487b3 /usr/local/bin/gomplate" | sha256sum --check --quiet
       - run: chmod 755 /usr/local/bin/gomplate
-      - run: gomplate -d report=samples/sample-report.yaml -f templates/sample-report-template.adoc > /tmp/templated-sample-report.adoc
-      - run: echo "2bdba0b5fe8d53a3a1830868014590ca0f0d9aae76ae51a705753237476c87a3 /tmp/templated-sample-report.adoc" | sha256sum --check --quiet
+      - run: gomplate -d report=samples/sample-report.yaml -f templates/sample-report-template.adoc > templated-sample-report.adoc
+      - run: echo "2bdba0b5fe8d53a3a1830868014590ca0f0d9aae76ae51a705753237476c87a3 templated-sample-report.adoc" | sha256sum --check --quiet
+      - name: upload adoc file
+        uses: actions/upload-artifact@v3
+        with:
+          name: adoc-report
+          path: templated-sample-report.adoc
+          retention-days: 5
+  Template_adoc_to_pdf:
+    name: Check that adoc file can be turned into PDF
+    needs: Template_go-template_to_adoc
+    runs-on: ubuntu-latest
+    steps:
+      - run: apt-get update -q -y && apt-get install -q -y ruby
+      - run: gem install asciidoctor-pdf
+      - name: download adoc file
+        uses: actions/download-artifact@v3
+        with:
+          name: adoc-report
+      - run: asciidoctor-pdf templated-sample-report.adoc
+      - run: echo "400f4eecdcd3f335eb1be802668208aebd46af7384b05b46e860b73698c6b111 templated-sample-report.pdf" | sha256sum --check --quiet
