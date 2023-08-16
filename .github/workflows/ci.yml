@@ -15,4 +15,5 @@ jobs:
         with:
           node-version: '20'
       - run: npm install -g ajv-cli
-      - run: ajv validate -s penetration-test-report-schema.json -d samples/sample-report.yaml
+      - run: ajv validate -s penetration-test-finding-schema.json -d samples/sample-finding.yaml
+      - run: ajv validate -s penetration-test-report-schema.json -r penetration-test-finding-schema.json -d samples/sample-report.yaml
