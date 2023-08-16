@@ -37,4 +37,18 @@ Check out the GitHub Actions steps for inspiration which use
 
 ## Templating
 
-🚧 Under construction! 🚧
+You can feed a ptrs file to any templating engine that accepts yaml input. Or any other ones that
+accept structured input formats to which you can convert yaml.
+
+[This file is a go template](templates/sample-report-template.adoc) that can be templated using
+`gomplate`:
+
+```
+gomplate -d report=samples/sample-report.yaml -f templates/sample-report-template.adoc > templated-sample-report.adoc
+```
+
+The resulting file can be turned into a PDF using `asciidoctor-pdf`:
+
+```
+asciidoctor-pdf templated-sample-report.adoc
+```
