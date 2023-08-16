@@ -45,4 +45,10 @@ jobs:
         with:
           name: adoc-report
       - run: asciidoctor-pdf templated-sample-report.adoc
+      - name: upload pdf file
+        uses: actions/upload-artifact@v3
+        with:
+          name: pdf-report
+          path: templated-sample-report.pdf
+          retention-days: 5
       - run: echo "400f4eecdcd3f335eb1be802668208aebd46af7384b05b46e860b73698c6b111 templated-sample-report.pdf" | sha256sum --check --quiet
