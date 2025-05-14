@@ -10,6 +10,7 @@ jobs:
     name: Validate samples against schemas
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - uses: cue-lang/setup-cue@v1.0.0
       - run: cue vet -v -d "#Finding" schema/finding-schema.cue samples/sample-finding.yaml
       - run: cue vet -v -d "#Report" schema/*.cue samples/sample-report.yaml
