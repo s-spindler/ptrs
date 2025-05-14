@@ -34,7 +34,7 @@
 	mitigation:   string
 }
 
-#Schema: {
+#Document: {
 	schemaVersion: string
 	provider:      #Provider
 	recipient:     #Recipient
@@ -43,4 +43,4 @@
 	findings: [...#Finding]
 }
 
-#Schema
+#Document
