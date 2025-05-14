@@ -1,6 +1,6 @@
 package ptrs
 
-#Document: {
+#Report: {
 	schemaVersion: string
 	provider:      #Provider
 	recipient:     #Recipient
@@ -9,4 +9,4 @@ package ptrs
 	findings: [...#Finding]
 }
 
-#Document
+#Report
