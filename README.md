@@ -29,11 +29,16 @@ and convert it to PDF (see below).
 
 ## Validation
 
-Report and finding files can be validated against the JSON schema files in this repository using
-any JSON schema validator.
+Report and finding files can be validated against the CUE schema files in this repository using
+the `cue` CLI.
 
-Check out the GitHub Actions steps for inspiration which use
-[ajv-cli](https://www.npmjs.com/package/ajv-cli).
+For the sample files in this repository:
+
+```
+$ cue vet -v -d "#Finding" schema/finding-schema.cue samples/sample-finding.yaml
+$ cue vet -v -d "#Report" schema/*.cue samples/sample-report.yaml
+```
+
 
 ## Templating
 
