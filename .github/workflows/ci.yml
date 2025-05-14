@@ -10,13 +10,9 @@ jobs:
     name: Validate samples against schemas
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: "20"
-      - run: npm install -g ajv-cli
-      - run: ajv validate -s penetration-test-finding-schema.json -d samples/sample-finding.yaml
-      - run: ajv validate -s penetration-test-report-schema.json -r penetration-test-finding-schema.json -d samples/sample-report.yaml
+      - uses: cue-lang/setup-cue@v1.0.0
+      - run: cue vet -v -d "#Finding" schema/finding-schema.cue samples/sample-finding.yaml
+      - run: cue vet -v -d "#Report" schema/*.cue samples/sample-report.yaml
   Template_go-template_to_adoc:
     name: Check that go template works
     runs-on: ubuntu-latest
