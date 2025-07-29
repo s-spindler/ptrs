@@ -10,7 +10,7 @@ jobs:
     name: Validate samples against schemas
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: cue-lang/setup-cue@v1.0.0
       - run: cue vet -v -d "#Finding" schema/finding-schema.cue samples/sample-finding.yaml
       - run: cue vet -v -d "#Report" schema/*.cue samples/sample-report.yaml
@@ -18,14 +18,14 @@ jobs:
     name: Check that go template works
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: curl -o /usr/local/bin/gomplate -sSL https://github.com/hairyhenderson/gomplate/releases/download/v3.11.5/gomplate_linux-amd64
       - run: echo "16f6a01a0ff22cae1302980c42ce4f98ca20f8c55443ce5a8e62e37fc23487b3 /usr/local/bin/gomplate" | sha256sum --check --quiet
       - run: chmod 755 /usr/local/bin/gomplate
       - run: gomplate -d report=samples/sample-report.yaml -f templates/sample-report-template.adoc > templated-sample-report.adoc
       - run: echo "2bdba0b5fe8d53a3a1830868014590ca0f0d9aae76ae51a705753237476c87a3 templated-sample-report.adoc" | sha256sum --check --quiet
       - name: upload adoc file
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: adoc-report
           path: templated-sample-report.adoc
@@ -38,12 +38,12 @@ jobs:
       - run: sudo apt-get update -q -y && sudo apt-get install -q -y ruby
       - run: sudo gem install asciidoctor-pdf
       - name: download adoc file
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: adoc-report
       - run: asciidoctor-pdf templated-sample-report.adoc
       - name: upload pdf file
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pdf-report
           path: templated-sample-report.pdf
