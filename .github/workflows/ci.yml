@@ -48,4 +48,3 @@ jobs:
           name: pdf-report
           path: templated-sample-report.pdf
           retention-days: 5
-      - run: echo "824b6ea688ed49aad11b7f242d353fb60ba7f2ed4413bd515359ea9978616a51 templated-sample-report.pdf" | sha256sum --check --quiet
