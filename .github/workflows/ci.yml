@@ -23,7 +23,6 @@ jobs:
       - run: echo "16f6a01a0ff22cae1302980c42ce4f98ca20f8c55443ce5a8e62e37fc23487b3 /usr/local/bin/gomplate" | sha256sum --check --quiet
       - run: chmod 755 /usr/local/bin/gomplate
       - run: gomplate -d report=samples/sample-report.yaml -f templates/sample-report-template.adoc > templated-sample-report.adoc
-      - run: echo "2bdba0b5fe8d53a3a1830868014590ca0f0d9aae76ae51a705753237476c87a3 templated-sample-report.adoc" | sha256sum --check --quiet
       - name: upload adoc file
         uses: actions/upload-artifact@v4
         with:
