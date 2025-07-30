@@ -1,3 +1,3 @@
 #Finding: {
-    severity: "None" | "Low" | "Medium" | "High" | "Critical"
+	severity: "None" | "Low" | "Medium" | "High" | "Critical"
 }
