@@ -1,7 +1,7 @@
 package ptrs
 
 #Report: {
-	schemaVersion: string
+	schemaVersion: "1.0.0-beta.1"
 	provider:      #Provider
 	recipient:     #Recipient
 	introduction:  string
