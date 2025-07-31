@@ -48,7 +48,7 @@ You can do this by adding a more narrow CUE schema file and adding it to your va
 Here is an example:
 
 ```
-cue vet -v -d "#Report" schema/finding-schema.cue schema/samples/sample-finding-schema-extension.cue samples/sample-report.yaml
+cue vet -v -d "#Report" schema/*.cue schema/samples/sample-finding-schema-extension.cue samples/sample-report.yaml
 ```
 
 The definition in `schema/samples/sample-finding-schema-extension.cue` narrows the allowed values
